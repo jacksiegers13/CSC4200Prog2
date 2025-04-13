@@ -1,84 +1,83 @@
-# CSC4200Prog2
-Programming Assignment 2: TCP Header Simulation in Client-Server Communication
-
-# TCP Header Simulation – Client-Server Communication
+# TCP Header Simulation – Client-Server Application
 
 ## Overview
 
-This project simulates a simplified TCP-like communication between a client and server using Python. The client sends structured messages containing a 13-byte custom header, and the server parses the header and responds accordingly.
+This project implements a simplified TCP-like client-server system using Python sockets. The client sends structured messages containing a custom 13-byte header, and the server parses this header to determine the correct response based on TCP-style control flags.
 
-This project demonstrates:
-- TCP/IP socket programming
-- Binary message formatting using `struct`
-- Control flag handling (SYN, ACK, FIN)
+The server can handle multiple clients simultaneously using threads.
 
-## Dependencies
+## Requirements
 
-- Python 3.8 or higher
-- Standard libraries only:
-  - `socket`
-  - `struct`
+- Python 3.8+
+- libraries `socket`, `struct`, `threading`
 
-## Project Structure
+---
+
+## Project Files
 
 ```
 .
 ├── client.py                # Client implementation
-├── server.py                # Server implementation
-├── Makefile                 # Build/run/clean commands
-├── README.md                # Project overview and instructions
-└── design_explanation.md   # Protocol design and logic documentation
+├── server.py                # Multi-client server implementation
+├── Makefile                 # Build/run commands
+├── README.md                # Project documentation
+└── design_explanation.md   # Header structure and design rationale
 ```
 
-## Custom TCP-Like Header
+---
 
-Each message begins with a 13-byte binary header, followed by a payload.
+## Header Structure
 
-| Field         | Size (bytes)  | Description                          |
-|---------------|---------------|--------------------------------------|
-| Source Port   | 2             | Client-side port                     |
-| Dest Port     | 2             | Server's listening port              |
-| Sequence No   | 4             | Sequence number                      |
-| ACK Flag      | 1             | 0 or 1 – acknowledgment              |
-| SYN Flag      | 1             | 0 or 1 – start handshake             |
-| FIN Flag      | 1             | 0 or 1 – terminate                   |
-| Payload Size  | 2             | Number of bytes in the payload       |
+Each message contains:
+- A fixed **13-byte header**
+- A variable-length payload
 
-- **Total Header Size:** 13 bytes  
-- **Struct Format:** `!HHIBBBH` (network byte order / big-endian)
+| Field         | Size | Description                       |
+|---------------|------|-----------------------------------|
+| Source Port   | 2 B  | Client's port                     |
+| Dest Port     | 2 B  | Server's listening port           |
+| Sequence No   | 4 B  | Message sequence number           |
+| ACK Flag      | 1 B  | Acknowledgment flag (0 or 1)      |
+| SYN Flag      | 1 B  | Synchronization flag (0 or 1)     |
+| FIN Flag      | 1 B  | Termination flag (0 or 1)         |
+| Payload Size  | 2 B  | Size of the message payload       |
 
-## How to Run
+**Struct format:** `!HHIBBBH`
 
-Make sure Python is installed.
+---
 
-### Build (no-op for Python)
+## How to Use
+
+### Build:
 make build
 
-### Run the server
+### Run the server:
 make run-server
 
-
-### Run the client (in another terminal)
+### Run the client (in separate terminals for multiple clients):
 make run-client
 
-### Clean up
+### Clean:
 make clean
 
-## Server Response Logic
+## Server Response Rules
 
-The server responds based on the flags in the header:
+The server returns specific messages based on the flags:
 
 - `SYN == 1` → `"SYN received – connection initiated"`
 - `ACK == 1` → `"ACK received – message acknowledged"`
 - `FIN == 1` → `"FIN received – connection closing"`
-- Otherwise → `"Data received – payload length: X"`
+- No flags → `"Data received – payload length: X"`
+
+---
 
 ## Notes
 
-- Start the server **before** the client.
-- You may modify flag values and payload in `client.py` for testing.
-- Only one client connection is supported at a time.
+- The server supports multiple clients using threads.
+- Start the server **before** starting clients.
+- Modify flags and payload in `client.py` for testing.
 - Graceful handling of disconnects and malformed headers is included.
 
+---
 
 
