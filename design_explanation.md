@@ -1,4 +1,3 @@
-
 # Design Explanation – TCP Header Simulation
 
 ## Header Format
@@ -14,40 +13,40 @@ The client constructs a 13-byte header using `struct.pack` with format string `!
 The final message sent is:  
 `[13-byte header] + [payload]`
 
-## Server Design
+---
 
-- Listens on a fixed port using TCP
-- Accepts a single connection
-- Parses the header using `struct.unpack`
-- Responds based on the first-matching flag:
-  - `SYN`: handshake
-  - `ACK`: acknowledgment
-  - `FIN`: connection close
-  - Default: payload message
+## Server Design 
 
-All received headers and responses are printed to the console.
+- Listens on a fixed port using TCP.
+- Accepts multiple incoming connections.
+- Each client is handled in a new thread using Python’s `threading.Thread`.
+- Inside each thread:
+  - The header is parsed using `struct.unpack`.
+  - The appropriate response is determined based on the flags.
+  - The server logs header and response info for each client.
+
+---
 
 ## Client Design
 
-- Connects to the server’s IP and port
-- Constructs a header with user-defined values
-- Sends the header + payload in one transmission
-- Waits for and prints the server's response
+- Connects to the server’s IP and port.
+- Constructs a header with user-defined values.
+- Sends the header + payload in one transmission.
+- Waits for and prints the server's response.
+
+---
 
 ## Error Handling
 
-- Ensures at least 13 bytes are received before parsing
-- Catches struct unpacking exceptions
-- Closes the connection cleanly on errors
+- Ensures at least 13 bytes are received before parsing.
+- Uses `try/except` to handle malformed data.
+- Each thread cleans up its own socket on disconnect or error.
 
 ---
 
 ## Design Rationale
 
-- **Fixed header size** simplifies parsing and testing
-- **Binary format** simulates real TCP header structures
-- **Flag-first logic** mimics how protocol stacks prioritize control bits
-- **Single-client setup** ensures predictable testing
+- **Threaded model** allows concurrent clients without blocking.
+- **Binary header format** simulates real TCP structure.
 
-The program can be expanded to support multiple clients, checksums, or more TCP-like features if desired.
 
