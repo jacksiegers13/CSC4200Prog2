@@ -45,3 +45,17 @@ def handle_client(conn, addr):
     finally:
         conn.close()
         print(f"[-] Disconnected from {addr}")
+    
+def main():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
+        server.bind((HOST, PORT))
+        server.listen()
+        print(f"[SERVER] Listening on {HOST}:{PORT}")
+
+        while True:
+            conn, addr = server.accept()
+            client_thread = threading.Thread(target=handle_client, args=(conn, addr), daemon=True)
+            client_thread.start()
+
+if __name__ == "__main__":
+    main()
