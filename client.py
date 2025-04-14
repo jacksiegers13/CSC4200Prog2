@@ -18,7 +18,7 @@ def main():
         # Define sample header values
         source_port = 12345
         sequence_number = 1
-        ack, syn, fin = 0, 1, 0  # Set SYN flag to initiate connection
+        ack, syn, fin = 1, 1, 0  # Set SYN flag to initiate connection
         payload = b"Hello, server!"
 
         # Create and send message (header + payload)
