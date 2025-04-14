@@ -1,4 +1,4 @@
-# Design Explanation – TCP Header Simulation
+# Design Explanation – TCP Header Simulation (Single-Client)
 
 ## Header Format
 
@@ -15,15 +15,18 @@ The final message sent is:
 
 ---
 
-## Server Design 
+## Server Design (Single-Client)
 
 - Listens on a fixed port using TCP.
-- Accepts multiple incoming connections.
-- Each client is handled in a new thread using Python’s `threading.Thread`.
-- Inside each thread:
-  - The header is parsed using `struct.unpack`.
-  - The appropriate response is determined based on the flags.
-  - The server logs header and response info for each client.
+- Accepts a single incoming connection.
+- Receives and parses messages with a fixed 13-byte header.
+- Responds based on the first-matching flag:
+  - `SYN`: handshake
+  - `ACK`: acknowledgment
+  - `FIN`: connection close
+  - Default: return payload length
+
+The server logs all received headers and responses.
 
 ---
 
@@ -40,13 +43,7 @@ The final message sent is:
 
 - Ensures at least 13 bytes are received before parsing.
 - Uses `try/except` to handle malformed data.
-- Each thread cleans up its own socket on disconnect or error.
+- Handles disconnects and exits cleanly.
 
 ---
-
-## Design Rationale
-
-- **Threaded model** allows concurrent clients without blocking.
-- **Binary header format** simulates real TCP structure.
-
 
