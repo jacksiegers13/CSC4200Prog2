@@ -4,12 +4,17 @@
 
 This project implements a simplified TCP-like client-server system using Python sockets. The client sends structured messages containing a custom 13-byte header, and the server parses this header to determine the correct response based on TCP-style control flags.
 
-The server can handle multiple clients simultaneously using threads.
+### Key Concepts:
+- TCP socket programming
+- Binary data formatting using `struct`
+- Simulated control flags (SYN, ACK, FIN)
+
+---
 
 ## Requirements
 
 - Python 3.8+
-- libraries `socket`, `struct`, `threading`
+- No external libraries (only `socket`, `struct`)
 
 ---
 
@@ -18,7 +23,7 @@ The server can handle multiple clients simultaneously using threads.
 ```
 .
 ├── client.py                # Client implementation
-├── server.py                # Multi-client server implementation
+├── server.py                # Single-client server implementation
 ├── Makefile                 # Build/run commands
 ├── README.md                # Project documentation
 └── design_explanation.md   # Header structure and design rationale
@@ -48,17 +53,27 @@ Each message contains:
 
 ## How to Use
 
-### Build:
+### Build (placeholder for Python):
+```bash
 make build
+```
 
 ### Run the server:
+```bash
 make run-server
+```
 
-### Run the client (in separate terminals for multiple clients):
+### Run the client:
+```bash
 make run-client
+```
 
 ### Clean:
+```bash
 make clean
+```
+
+---
 
 ## Server Response Rules
 
@@ -73,11 +88,10 @@ The server returns specific messages based on the flags:
 
 ## Notes
 
-- The server supports multiple clients using threads.
-- Start the server **before** starting clients.
-- Modify flags and payload in `client.py` for testing.
+- The server accepts one client connection at a time.
+- Start the server **before** the client.
+- You can modify flags and payload in `client.py`.
 - Graceful handling of disconnects and malformed headers is included.
 
 ---
-
 
